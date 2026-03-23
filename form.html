@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registration Form</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #e8f0e9;
+    min-height: 100vh;
+    padding: 24px 16px 60px;
+  }
+
+  .page-wrap {
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* ── TOP CARD (title + account) ── */
+  .card-top {
+    background: #fff;
+    border-radius: 10px 10px 0 0;
+    border-top: 10px solid #1e7e34;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+
+  .card-title-section {
+    padding: 22px 24px 16px;
+    border-bottom: 1px solid #e8eaed;
+  }
+  .card-title-section h1 {
+    font-size: 2rem;
+    font-weight: 400;
+    color: #111;
+    letter-spacing: -0.3px;
+  }
+
+  /* Event info banner */
+  .event-banner {
+    background: #f0f7f1;
+    border-left: 4px solid #1e7e34;
+    margin: 0 24px 16px;
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.84rem;
+    color: #374151;
+    display: none;
+  }
+  .event-banner b { color: #111; font-weight: 600; }
+
+  .card-account {
+    padding: 14px 24px 14px;
+    border-bottom: 1px solid #e8eaed;
+  }
+
+  .account-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    font-size: 0.85rem;
+    color: #444;
+    margin-bottom: 6px;
+  }
+  .account-email { font-weight: 500; color: #222; }
+  .account-switch {
+    margin-left: 10px;
+    color: #1a73e8;
+    text-decoration: none;
+    font-size: 0.85rem;
+  }
+  .account-switch:hover { text-decoration: underline; }
+
+  .account-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .account-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    color: #5f6368;
+  }
+  .account-meta-row svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+  .required-note {
+    padding: 10px 24px 14px;
+    font-size: 0.82rem;
+    color: #d93025;
+  }
+
+  /* ── FIELD CARDS ── */
+  .card-field {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px 24px 18px;
+    margin-top: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    border: 1px solid #e0e0e0;
+  }
+
+  .field-label {
+    font-size: 0.9rem;
+    color: #444;
+    margin-bottom: 14px;
+    line-height: 1.4;
+  }
+  .field-label .req { color: #d93025; margin-left: 2px; }
+
+  .field-input {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #9aa0a6;
+    padding: 4px 0 8px;
+    font-size: 0.95rem;
+    font-family: 'Inter', sans-serif;
+    color: #111;
+    background: transparent;
+    outline: none;
+    transition: border-color 0.18s;
+  }
+  .field-input:focus { border-bottom: 2px solid #1a73e8; margin-bottom: -1px; }
+
+  /* ── BOTTOM BAR ── */
+  .bottom-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0 0;
+  }
+  .bottom-left { display: flex; align-items: center; gap: 14px; }
+
+  .btn-submit {
+    background: #1e7e34;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 11px 28px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.15s, box-shadow 0.15s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+  .btn-submit:hover { background: #166428; box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
+  .btn-submit:disabled { background: #9ca3af; cursor: not-allowed; box-shadow: none; }
+
+  .btn-clear {
+    background: none;
+    border: none;
+    color: #1a73e8;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    padding: 4px 0;
+  }
+  .btn-clear:hover { text-decoration: underline; }
+
+  /* ── SUCCESS STATE ── */
+  .success-screen {
+    display: none;
+    background: #fff;
+    border-radius: 10px;
+    padding: 48px 32px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    margin-top: 12px;
+  }
+  .success-screen.show { display: block; }
+  .success-icon { font-size: 3.5rem; margin-bottom: 16px; display: block; }
+  .success-screen h2 { font-size: 1.3rem; font-weight: 600; color: #111; margin-bottom: 8px; }
+  .success-screen p { font-size: 0.88rem; color: #5f6368; line-height: 1.65; margin-bottom: 24px; }
+  .success-divider { border: none; border-top: 1px solid #e8eaed; margin: 20px 0; }
+
+  .btn-another {
+    background: none;
+    border: 1px solid #1a73e8;
+    color: #1a73e8;
+    border-radius: 4px;
+    padding: 9px 20px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.15s;
+  }
+  .btn-another:hover { background: #e8f0fe; }
+
+  /* Error state */
+  .field-error { font-size: 0.78rem; color: #d93025; margin-top: 6px; display: none; }
+
+  /* Loading spinner */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- Main form (hidden on success) -->
+  <div id="form-section">
+    <div class="card-top">
+      <div class="card-title-section">
+        <h1>Registration Form</h1>
+      </div>
+      <div class="event-banner" id="event-banner">
+        📅 Checking in for: <b id="banner-title"></b> &nbsp;·&nbsp; <span id="banner-time"></span>
+      </div>
+      <div class="card-account">
+        <div class="account-row">
+          <span class="account-email" id="account-email">thirithiriminmin@gmail.com</span>
+          <a class="account-switch" href="#">Switch accounts</a>
+        </div>
+        <div class="account-meta">
+          <div class="account-meta-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#5f6368" stroke-width="2"><circle cx="12" cy="12" r="3"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            <span>Not shared</span>
+          </div>
+          <div class="account-meta-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#5f6368" stroke-width="2"><path d="M3 7h18M3 12h18M3 17h18"/></svg>
+            <span>Resubmit to save</span>
+          </div>
+        </div>
+      </div>
+      <div class="required-note">* Indicates required question</div>
+    </div>
+
+    <!-- Name field -->
+    <div class="card-field">
+      <div class="field-label">Name <span class="req">*</span></div>
+      <input class="field-input" id="inp-name" type="text" autocomplete="name" placeholder="">
+      <div class="field-error" id="err-name">This is a required question</div>
+    </div>
+
+    <!-- Email field -->
+    <div class="card-field">
+      <div class="field-label">Email <span class="req">*</span></div>
+      <input class="field-input" id="inp-email" type="email" autocomplete="email" placeholder="">
+      <div class="field-error" id="err-email">Please enter a valid email address</div>
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="bottom-bar">
+      <div class="bottom-left">
+        <button class="btn-submit" id="btn-submit" onclick="submitForm()">Submit</button>
+        <button class="btn-clear" onclick="clearForm()">Clear form</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success screen -->
+  <div class="success-screen" id="success-screen">
+    <span class="success-icon">✅</span>
+    <h2>Your response has been recorded.</h2>
+    <p id="success-msg">Thank you for registering!<br>A confirmation will be sent to your email.</p>
+    <hr class="success-divider">
+    <button class="btn-another" onclick="submitAnother()">Submit another response</button>
+  </div>
+
+</div>
+
+<script>
+// Read event data from URL params (set by QR code)
+const params = new URLSearchParams(window.location.search);
+const eventId    = params.get('id');
+const eventTitle = params.get('title');
+const eventDate  = params.get('date');
+const eventTime  = params.get('time');
+
+// Show event banner if data present
+if (eventTitle) {
+  const banner = document.getElementById('event-banner');
+  banner.style.display = 'block';
+  document.getElementById('banner-title').textContent = eventTitle;
+  document.getElementById('banner-time').textContent = (eventDate || '') + (eventTime ? ' · ' + eventTime : '');
+  document.title = 'Check-In: ' + eventTitle;
+}
+
+function validate() {
+  let ok = true;
+  const name  = document.getElementById('inp-name').value.trim();
+  const email = document.getElementById('inp-email').value.trim();
+  const errN  = document.getElementById('err-name');
+  const errE  = document.getElementById('err-email');
+
+  if (!name) { errN.style.display = 'block'; ok = false; } else { errN.style.display = 'none'; }
+  const emailOk = email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  if (!emailOk) { errE.style.display = 'block'; ok = false; } else { errE.style.display = 'none'; }
+  return ok;
+}
+
+function submitForm() {
+  if (!validate()) return;
+
+  const name  = document.getElementById('inp-name').value.trim();
+  const email = document.getElementById('inp-email').value.trim();
+  const btn   = document.getElementById('btn-submit');
+
+  // Show loading state
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Submitting…';
+
+  // ── Google Form submission ──
+  // Replace these with your real Google Form values:
+  const FORM_ACTION = "https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse";
+  const ENTRY_NAME  = "entry.XXXXXXXXX";
+  const ENTRY_EMAIL = "entry.YYYYYYYYY";
+  const ENTRY_EVENT = "entry.ZZZZZZZZZ";
+
+  let iframe = document.getElementById('gf-iframe');
+  if (!iframe) {
+    iframe = document.createElement('iframe');
+    iframe.id = 'gf-iframe';
+    iframe.name = 'gf-iframe';
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+  }
+
+  const f = document.createElement('form');
+  f.method = 'POST';
+  f.action = FORM_ACTION;
+  f.target = 'gf-iframe';
+  f.style.display = 'none';
+
+  const addField = (n, v) => {
+    const i = document.createElement('input');
+    i.type='hidden'; i.name=n; i.value=v;
+    f.appendChild(i);
+  };
+  addField(ENTRY_NAME,  name);
+  addField(ENTRY_EMAIL, email);
+  addField(ENTRY_EVENT, eventTitle || '');
+
+  document.body.appendChild(f);
+  f.submit();
+  document.body.removeChild(f);
+
+  // After short delay, show success
+  setTimeout(() => {
+    document.getElementById('form-section').style.display = 'none';
+    const successMsg = document.getElementById('success-msg');
+    successMsg.innerHTML = `Thank you, <b>${name}</b>!<br>Your check-in for <b>${eventTitle || 'the event'}</b> has been saved to your Google account.`;
+    document.getElementById('success-screen').classList.add('show');
+  }, 900);
+}
+
+function clearForm() {
+  document.getElementById('inp-name').value = '';
+  document.getElementById('inp-email').value = '';
+  document.getElementById('err-name').style.display = 'none';
+  document.getElementById('err-email').style.display = 'none';
+}
+
+function submitAnother() {
+  document.getElementById('success-screen').classList.remove('show');
+  document.getElementById('form-section').style.display = '';
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = false;
+  btn.innerHTML = 'Submit';
+  clearForm();
+}
+</script>
+</body>
+</html>
